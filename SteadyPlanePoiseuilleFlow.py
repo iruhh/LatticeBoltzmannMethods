@@ -42,8 +42,12 @@ def initialize():
 @ti.kernel
 def stream():
     for i, j, l in fb:
+        if i == 0 or i == nx - 1 or j == 0 or j == ny - 1:
+            continue
         l_inv = invert_l[l]
         ii, jj = i + ex[l_inv], j + ey[l_inv]
+        if ii < 0 or ii > nx-1 or jj < 0 or jj > ny-1:
+            continue
         if isObstacle[ii, jj] == 1:
             fb[i, j, l] = fa[i, j, l_inv]
         else:
@@ -70,18 +74,39 @@ def collide():
 
         for l in ti.ndrange((0, 9)):
             a = ex[l] * ux + ey[l] * uy
-            f_eq = w[i] * (density + 1.5 * (ux * ux + uy * uy) + 3 * a + 4.5 * a * a)
-            fb[i, j, l] = (1 - omega) * fb[i, j, l] + omega * f_eq
+            f_eq = w[l] * (density + 1.5 * (ux * ux + uy * uy) + 3 * a + 4.5 * a * a)
+            fb[i, j, l] = (1.0 - omega) * fb[i, j, l] + omega * f_eq
+
 
 @ti.kernel
 def fill_fa_with_fb():
     for i, j, l in fa:
         fa[i,j,l] = fb[i,j,l]
 
+@ti.func
+def simple_check_get_density_ux_uy(i, j, isb):
+    density, ux, uy = 0.0, 0.0, 0.0
+    for l in range(Q):
+        f_ijl = fb[i, j, l]
+        if isb == False:
+            f_ijl = fa[i, j, l]
+        density += f_ijl
+        ux += ex[l] * f_ijl
+        uy += ey[l] * f_ijl
+    return density, ux, uy
 
+@ti.kernel
+def simple_check():
+    for i in range(975, 985):
+        density, ux, uy = simple_check_get_density_ux_uy(i, 250, False)
+        print(density, ux, uy)
 
 initialize()
+simple_check()
 while True:
     stream()
     collide()
     fill_fa_with_fb()
+    simple_check()
+
+    # simple_check()
