@@ -4,18 +4,22 @@ ti.init(arch=ti.cpu)  # Alternatively, ti.init(arch=ti.cpu)
 nx, ny = 7, 5
 Q = 9
 omega = 1.0
+velocity_N = 7.0
 # Once a field is declared, Taichi automatically initializes its elements to zero.
 isObstacle = ti.field(dtype=ti.i32, shape=(nx, ny))
 fa = ti.field(dtype=ti.f32, shape=(nx, ny, Q))
 fb = ti.field(dtype=ti.f32, shape=(nx, ny, Q))
 # f6 f3 f5
-# f2 f0 f1
+# f2 f0 f1  not used
 # f8 f4 f7
 # w_tuple = (1/3, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18)
 w_tuple = (4/9, 1/9, 1/9, 1/9, 1/9, 1/36, 1/36, 1/36, 1/36)
-ex_tuple = (0, 1, -1, 0, 0, 1,-1, 1, -1)
-ey_tuple = (0, 0, 0, 1, -1, 1, 1, -1, -1)
-invert_l_tuple = (0, 2, 1, 4, 3, 8, 7, 6, 8) # f0_inv = f0?
+# ex_tuple = (0, 1, -1, 0, 0, 1,-1, 1, -1)
+# ey_tuple = (0, 0, 0, 1, -1, 1, 1, -1, -1)
+# invert_l_tuple = (0, 2, 1, 4, 3, 8, 7, 6, 8) # f0_inv = f0?
+ex_tuple = (0, 1, 0, -1,  0, 1, -1, -1,  1)
+ey_tuple = (0, 0, 1,  0, -1, 1,  1, -1, -1)
+invert_l_tuple = (0, 3, 4, 1, 2, 7, 8, 5, 6) # f0_inv = f0?
 w = ti.field(dtype=ti.f32, shape=Q)
 ex = ti.field(dtype=ti.i32, shape=Q)
 ey = ti.field(dtype=ti.i32, shape=Q)
@@ -43,8 +47,15 @@ def initialize():
 @ti.kernel
 def stream():
     for i, j, l in fb:
-        if i == 0 or i == nx - 1 or j == 0 or j == ny - 1:
+        if i == 0 or i == nx - 1 or j == ny - 1:
             continue
+
+        if j == 0:
+
+
+
+            continue
+
         l_inv = invert_l[l]
         ii, jj = i + ex[l_inv], j + ey[l_inv]
         if isObstacle[ii, jj] == 1:
@@ -101,8 +112,8 @@ def simple_check():
     # for i in range(975, 985):
     #     density, ux, uy = simple_check_get_density_ux_uy(i, 250, False)
     #     print(density, ux, uy)
-    for i in range(nx):
-        for j in range(ny):
+    for j in range(ny):
+        for i in range(nx):
             density, ux, uy = simple_check_get_density_ux_uy(i, j, False)
             if ux >= 0:
                 print(' ', end='')
