@@ -4,7 +4,11 @@ ti.init(arch=ti.cpu)  # Alternatively, ti.init(arch=ti.cpu)
 nx, ny = 7, 5
 Q = 9
 omega = 1.0
-velocity_N = 7.0
+# v
+# ^
+# |  -> u
+v_wall = 0.0
+u_wall = 0.05
 # Once a field is declared, Taichi automatically initializes its elements to zero.
 isObstacle = ti.field(dtype=ti.i32, shape=(nx, ny))
 fa = ti.field(dtype=ti.f32, shape=(nx, ny, Q))
@@ -47,13 +51,7 @@ def initialize():
 @ti.kernel
 def stream():
     for i, j, l in fb:
-        if i == 0 or i == nx - 1 or j == ny - 1:
-            continue
-
-        if j == 0:
-
-
-
+        if i == 0 or i == nx - 1 or j == 0 or j == ny - 1:
             continue
 
         l_inv = invert_l[l]
@@ -62,6 +60,30 @@ def stream():
             fb[i, j, l] = fa[i, j, l_inv]
         else:
             fb[i, j, l] = fa[ii, jj, l]
+
+
+    for i in range(1, nx-1): # 1, 2, 3 ... nx-2
+        j = 1
+
+
+        density1 = 0.0
+        for l in range(9):
+            density1 += fb[i,j,l]
+        print(i, j, f'density1 {density1}')
+
+        density = (fb[i, j, 0] + fb[i, j, 1] + fb[i, j, 3] + 2 * (fb[i, j, 2] + fb[i, j, 6] + fb[i, j, 5])) / (1.0 + v_wall)
+        fb[i, j, 4] = fb[i, j, 2] - 2.0 / 3.0 * density * v_wall
+        fb[i, j, 7] = fb[i, j, 5] + 0.5 * (fb[i, j, 1] - fb[i, j, 3]) - 1.0 / 6.0 * density * v_wall - 0.5 * density * u_wall
+        fb[i, j, 8] = fb[i, j, 6] + 0.5 * (fb[i, j, 3] - fb[i, j, 1]) - 1.0 / 6.0 * density * v_wall + 0.5 * density * u_wall
+
+        density2 = 0.0
+        for l in range(9):
+            density2 += fb[i, j, l]
+        print(i, j, f'density2 {density2}')
+
+        for l in range(9):
+            print(fb[i, j, l])
+        print()
 
 
 @ti.func
@@ -115,15 +137,16 @@ def simple_check():
     for j in range(ny):
         for i in range(nx):
             density, ux, uy = simple_check_get_density_ux_uy(i, j, False)
-            if ux >= 0:
+            if density >= 0:
                 print(' ', end='')
-            print(ux, end=' ')
+            print(density, end=' ')
         print()
     print()
 
 initialize()
+collide() # ?
 simple_check()
-iu = 100
+iu = 5
 while iu > 0:
     stream()
     collide()
