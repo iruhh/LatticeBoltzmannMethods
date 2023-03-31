@@ -11,7 +11,8 @@ fb = ti.field(dtype=ti.f32, shape=(nx, ny, Q))
 # f6 f3 f5
 # f2 f0 f1
 # f8 f4 f7
-w_tuple = (1/3, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18)
+# w_tuple = (1/3, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18, 1/18)
+w_tuple = (4/9, 1/9, 1/9, 1/9, 1/9, 1/36, 1/36, 1/36, 1/36)
 ex_tuple = (0, 1, -1, 0, 0, 1,-1, 1, -1)
 ey_tuple = (0, 0, 0, 1, -1, 1, 1, -1, -1)
 invert_l_tuple = (0, 2, 1, 4, 3, 8, 7, 6, 8) # f0_inv = f0?
@@ -60,7 +61,7 @@ def get_density_velocity(i, j):
         density += fb_ijl
         ux += ex[l] * fb_ijl
         uy += ey[l] * fb_ijl
-    return density, ux, uy
+    return density, ux / density, uy / density
 
 @ti.kernel
 def collide():
@@ -93,7 +94,7 @@ def simple_check_get_density_ux_uy(i, j, isb):
         density += f_ijl
         ux += ex[l] * f_ijl
         uy += ey[l] * f_ijl
-    return density, ux, uy
+    return density, ux / density, uy / density
 
 @ti.kernel
 def simple_check():
