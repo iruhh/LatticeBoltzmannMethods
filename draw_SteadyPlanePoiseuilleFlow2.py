@@ -1,15 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-uo = 0.02
+uo = 0.2
 f = np.load("np_f.npy")
 rho = np.load("np_rho.npy")
 u = np.load("np_u.npy")
 v = np.load("np_v.npy")
-np.save(".\\data\\SteadyPlanePoiseuilleFlow2_f.npy", f)
-np.save(".\\data\\SteadyPlanePoiseuilleFlow2_rho.npy", rho)
-np.save(".\\data\\SteadyPlanePoiseuilleFlow2_u.npy", u)
-np.save(".\\data\\SteadyPlanePoiseuilleFlow2_v.npy", v)
+np.save(".\\data\\SteadyPlanePoiseuilleFlow2_loop10000_f.npy", f)
+np.save(".\\data\\SteadyPlanePoiseuilleFlow2_loop10000_rho.npy", rho)
+np.save(".\\data\\SteadyPlanePoiseuilleFlow2_loop10000_u.npy", u)
+np.save(".\\data\\SteadyPlanePoiseuilleFlow2_loop10000_v.npy", v)
 print(f.shape)
 print(rho.shape)
 print(u.shape)
@@ -28,11 +28,10 @@ def draw_figures():
 
     # u_uniformed
     u_uniformed = u / uo  # to be confirmed
-    print(f'u_uniformed.shape {u_uniformed.shape}')
-    print(f'u[51, :].shape {u[51, :].shape}, y.shape {y.shape}')
-    print(f'u[51, :] {u[51, :]}')
-    plt.plot(u[51, :], y)
-
+    for i in range(100, 701, 200):
+        plt.plot(u_uniformed[i, :], y, label=f'x {i}')
+        plt.legend()
+    plt.show()
 
     # contour
     str = np.zeros((nx, ny))
@@ -40,7 +39,7 @@ def draw_figures():
         for j in range(1, ny):
             str[i, j] = str[i, j-1] + 0.5 * (u[i, j] + u[i, j-1])
 
-    # plt.contour(X, Y, str, 80, cmap='RdBu_r')
+    plt.contour(X, Y, str, 80, cmap='RdBu_r')
     plt.show()
 
 
