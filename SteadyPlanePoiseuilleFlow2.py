@@ -43,24 +43,33 @@ def ti_init():
 @ti.kernel
 def boundary():
     for j in range(1, ny +1):  # 1, 2 ... ny
-        f[1, j, 1] = f[1, j, 3]
-        f[1, j, 5] = f[1, j, 7]
-        f[1, j, 8] = f[1, j, 6]
-
-        f[nx, j, 3] = f[nx, j, 1]
-        f[nx, j, 7] = f[nx, j, 5]
-        f[nx, j, 6] = f[nx, j, 8] #taichi?
+        # right boundary
+        f[nx, j, 3] = f[nx-1, j, 3]
+        f[nx, j, 7] = f[nx-1, j, 7]
+        f[nx, j, 6] = f[nx-1, j, 6]
 
     for i in range(1, nx +1):  # 1, 2 ... nx
+        # bottom boundary
         f[i, 1, 2] = f[i, 1, 4]
         f[i, 1, 5] = f[i, 1, 7]
         f[i, 1, 6] = f[i, 1, 8]
-
-    for i in range(2, nx-1 +1):  # 2, 3 ... nx-1
-        rhon = f[i, ny, 9] + f[i, ny, 1] + f[i, ny, 3] + 2.0 * (f[i, ny, 2] + f[i,ny,6] + f[i,ny,5])
+        # top boundary
         f[i, ny, 4] = f[i, ny, 2]
-        f[i, ny, 8] = f[i, ny, 6] + rhon * uo / 6.0
-        f[i, ny, 7] = f[i, ny, 5] - rhon * uo / 6.0
+        f[i, ny, 7] = f[i, ny, 5]
+        f[i, ny, 8] = f[i, ny, 6]
+
+    # for i in range(2, nx-1 +1):  # 2, 3 ... nx-1
+    #     rhon = f[i, ny, 9] + f[i, ny, 1] + f[i, ny, 3] + 2.0 * (f[i, ny, 2] + f[i,ny,6] + f[i,ny,5])
+    #     f[i, ny, 4] = f[i, ny, 2]
+    #     f[i, ny, 8] = f[i, ny, 6] + rhon * uo / 6.0
+    #     f[i, ny, 7] = f[i, ny, 5] - rhon * uo / 6.0
+
+    # left boundary
+    for j in range(2, ny-1 +1):  # 2, 3 ... ny-1
+        # didn't use rhon like above
+        f[1, j, 1] = f[1, j, 3] + 2 * rho[1, j] * uo / 3.0
+        f[1, j, 5] = f[1, j, 7] - 0.5 * (f[1, j, 2] - f[1, j, 4])  +  rho[1, j] * uo / 6.0
+        f[1, j, 8] = f[1, j, 6] + 0.5 * (f[1, j, 2] - f[1, j, 4])  +  rho[1, j] * uo / 6.0
 
 
 @ti.kernel
