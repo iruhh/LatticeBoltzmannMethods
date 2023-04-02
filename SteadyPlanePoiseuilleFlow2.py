@@ -74,8 +74,8 @@ def boundary():
 
 @ti.kernel
 def collision():
-    for j in range(1, ny +1):  # 1, 2 ... ny
-        for i in range(1, nx +1):  # 1, 2 ... nx
+    for i in range(1, nx + 1):  # 1, 2 ... nx
+        for j in range(1, ny +1):  # 1, 2 ... ny
             t1 = u[i, j] * u[i, j] + v[i, j] * v[i, j]
             for k in range(1, 10):  # 1, 2 ... 9
                 t2 = u[i,j] * cx[k] + v[i,j] * cy[k]
@@ -218,19 +218,15 @@ while count < 100:
 
 # print_f(count, "whole loop over")
 def save_fruv():
-    np_f = np.zeros((nx, ny, 9))
-    np_rho = np.zeros((nx, ny))
-    np_u = np.zeros((nx, ny))
-    np_v = np.zeros((nx, ny))
+    np_f = f.to_numpy()[1:, 1:, 1:]
+    np_rho = rho.to_numpy()[1:, 1:]
+    np_u = u.to_numpy()[1:, 1:]
+    np_v = v.to_numpy()[1:, 1:]
 
-    for i in range(1, nx +1):
-        for j in range(1, ny +1):
-            np_rho[i-1, j-1] = rho[i, j]
-            np_u[i-1, j-1] = u[i, j]
-            np_v[i-1, j-1] = v[i, j]
-
-            for k in range(1, 10):
-                np_f[i-1, j-1, k-1] = f[i, j, k]
+    print(f'np_f.shape {np_f.shape}')
+    print(f'np_rho.shape {np_rho.shape}')
+    print(f'np_u.shape {np_u.shape}')
+    print(f'np_v.shape {np_v.shape}')
 
     np.save("np_f.npy", np_f)
     np.save("np_rho.npy", np_rho)
