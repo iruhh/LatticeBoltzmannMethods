@@ -1,10 +1,10 @@
 import numpy as np
-import matplotlib.pyplot as plt
+
 
 import taichi as ti
-ti.init(arch=ti.cpu, debug=True, cpu_max_num_threads=1)  # Alternatively, ti.init(arch=ti.cpu)
+ti.init(arch=ti.gpu)  # Alternatively, ti.init(arch=ti.cpu)
 
-nx, ny = 11, 11
+nx, ny = 101, 101
 f = ti.field(dtype=ti.f32, shape=(nx+1, ny+1, 10))
 resf = ti.field(dtype=ti.f32, shape=(nx+1, ny+1, 10))
 feq = ti.field(dtype=ti.f32, shape=(nx+1, ny+1, 10))
@@ -206,21 +206,27 @@ while count < 1000:
 
     count += 1
 
-print_f(count, "whole loop over")
 
-x_fig = np.arange(0, nx)
-y_fig = np.arange(0, ny)
-X_fig, Y_fig = np.meshgrid(x_fig, y_fig)
+# print_f(count, "whole loop over")
+def save_fruv():
+    np_f = np.zeros((nx, ny, 9))
+    np_rho = np.zeros((nx, ny))
+    np_u = np.zeros((nx, ny))
+    np_v = np.zeros((nx, ny))
 
+    for i in range(1, nx +1):
+        for j in range(1, ny +1):
+            np_rho[i-1, j-1] = rho[i, j]
+            np_u[i-1, j-1] = u[i, j]
+            np_v[i-1, j-1] = v[i, j]
 
-u_fig = np.ones((nx, ny))
-v_fig = np.zeros((nx, ny))
-for i in range(nx):
-    for j in range(ny):
-        u_fig[i, j] = u[i, j]
-        v_fig[i, j] = v[i, j]
+            for k in range(1, 10):
+                np_f[i-1, j-1, k-1] = f[i, j, k]
 
-fig = plt.figure(figsize=(12, 7))
-plt.streamplot(X_fig, Y_fig, u_fig, v_fig, density=0.5)
-plt.show()
+    np.save("np_f.npy", np_f)
+    np.save("np_rho.npy", np_rho)
+    np.save("np_u.npy", np_u)
+    np.save("np_v.npy", np_v)
+
+save_fruv()
 
