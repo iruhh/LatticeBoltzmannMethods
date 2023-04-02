@@ -193,7 +193,7 @@ def tmp_first_collision():
 # main loop
 ti_init()
 # tmp_first_collision()
-while count < 100:
+while count < 10000:
     # print_rho(count, "loop begin not from ruv")
     # print_rho_in_ruv(count, "loop begin from ruv")
 
