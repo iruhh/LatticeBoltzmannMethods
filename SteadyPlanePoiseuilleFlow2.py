@@ -4,7 +4,7 @@ import numpy as np
 import taichi as ti
 ti.init(arch=ti.gpu)  # Alternatively, ti.init(arch=ti.cpu)
 
-nx, ny = 101, 101
+nx, ny = 1001, 41
 f = ti.field(dtype=ti.f32, shape=(nx+1, ny+1, 10))
 resf = ti.field(dtype=ti.f32, shape=(nx+1, ny+1, 10))
 feq = ti.field(dtype=ti.f32, shape=(nx+1, ny+1, 10))
@@ -21,8 +21,8 @@ cy = ti.field(dtype=ti.i32, shape=10)
 invert_k_tuple = (-22222223, 3, 4, 1, 2, 7, 8, 5, 6, 9)
 invert_k = ti.field(dtype=ti.i32, shape=10)
 
-uo = 0.10
-alpha = 0.01
+uo = 0.2
+alpha = 0.02
 omega = 1.0 / (3.0 * alpha + 0.5)
 count = 0
 
@@ -32,8 +32,8 @@ for k in range(1, 10):
     cy[k] = cy_tuple[k]
     invert_k[k] = invert_k_tuple[k]
 
-for i in range(1, nx +1):  # 1, 2 ... nx
-    u[i, ny] = uo
+for j in range(2, ny-1 +1):
+    u[1, j] = uo
 @ti.kernel
 def ti_init():
     for i, j in rho:
@@ -193,7 +193,7 @@ def tmp_first_collision():
 # main loop
 ti_init()
 # tmp_first_collision()
-while count < 1000:
+while count < 100:
     # print_rho(count, "loop begin not from ruv")
     # print_rho_in_ruv(count, "loop begin from ruv")
 
