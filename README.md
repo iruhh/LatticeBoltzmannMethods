@@ -3,7 +3,9 @@
 ## 效果图
 
 ### LidDriven
-<img width="500" alt="LidDriven2_contour" src="https://user-images.githubusercontent.com/86449016/229342495-383b8d6d-dd36-487a-808d-f1a3922c7f3e.png"><img width="500" alt="LidDriven2_streamlines" src="https://user-images.githubusercontent.com/86449016/229342505-83123214-82b0-43b1-954c-afbba03173bd.png">
+<img width="500" alt="LidDriven2_contour" src="./img/LidDriven2_contour.png">
+
+<img width="500" alt="LidDriven2_streamlines" src="./img/LidDriven2_streamlines.png">
 
 ### SteadyPlanePoiseuilleFlow-2000loops
 <img width="500" alt="SteadyPlanePoiseuilleFlow2_loop2000_contour" src="https://user-images.githubusercontent.com/86449016/229342513-75bf40e1-dc69-488a-ae64-62a3e02730bf.png"><img width="500" alt="SteadyPlanePoiseuilleFlow2_loop2000_u" src="https://user-images.githubusercontent.com/86449016/229342516-fbb03650-7f4f-44d3-abf4-b7e1d7b8f963.png">
