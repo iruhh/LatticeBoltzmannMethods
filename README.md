@@ -3,6 +3,9 @@
 ## 效果图
 
 ### LidDriven
+
+<img width="400" alt="LidDriven2_contour" src="./img/LidDriven2_streamlines-2.png">
+
 <img width="500" alt="LidDriven2_contour" src="./img/LidDriven2_contour.png">
 
 <img width="500" alt="LidDriven2_streamlines" src="./img/LidDriven2_streamlines.png">
